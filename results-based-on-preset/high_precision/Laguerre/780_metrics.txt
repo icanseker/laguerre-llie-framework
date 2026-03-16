@@ -1,0 +1,17 @@
+Image: 780.png
+Algorithm: Laguerre
+I_mean: 10.89
+Status: PROCESSED
+Optimal_nu: 0.5195
+Optimal_t: 0.8209
+Total_evals: 1215
+Preset: high_precision
+Processing_time_sec: 1.2742
+
+--- Metrics ---
+Entropy: 7.1732
+CII: 13.4074
+NIQE: 3.6186
+PSNR: 9.1734
+MSE: 7865.7909
+SSIM: 0.5298

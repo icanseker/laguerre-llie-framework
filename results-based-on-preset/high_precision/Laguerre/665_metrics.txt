@@ -1,0 +1,17 @@
+Image: 665.png
+Algorithm: Laguerre
+I_mean: 7.57
+Status: PROCESSED
+Optimal_nu: 0.6723
+Optimal_t: 0.8921
+Total_evals: 1204
+Preset: high_precision
+Processing_time_sec: 1.2516
+
+--- Metrics ---
+Entropy: 7.5464
+CII: 19.1586
+NIQE: 3.6869
+PSNR: 16.0810
+MSE: 1603.1594
+SSIM: 0.6415

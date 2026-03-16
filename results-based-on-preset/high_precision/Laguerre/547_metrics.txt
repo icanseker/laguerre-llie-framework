@@ -1,0 +1,17 @@
+Image: 547.png
+Algorithm: Laguerre
+I_mean: 15.67
+Status: PROCESSED
+Optimal_nu: 0.5237
+Optimal_t: 0.7503
+Total_evals: 1179
+Preset: high_precision
+Processing_time_sec: 1.2462
+
+--- Metrics ---
+Entropy: 7.4808
+CII: 9.6466
+NIQE: 4.1984
+PSNR: 13.6516
+MSE: 2804.9004
+SSIM: 0.7675

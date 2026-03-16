@@ -1,0 +1,17 @@
+Image: 669.png
+Algorithm: Laguerre
+I_mean: 17.24
+Status: PROCESSED
+Optimal_nu: 0.5219
+Optimal_t: 0.7390
+Total_evals: 489
+Preset: balanced
+Processing_time_sec: 0.5215
+
+--- Metrics ---
+Entropy: 7.4332
+CII: 8.9249
+NIQE: 3.7173
+PSNR: 18.2971
+MSE: 962.4389
+SSIM: 0.8391

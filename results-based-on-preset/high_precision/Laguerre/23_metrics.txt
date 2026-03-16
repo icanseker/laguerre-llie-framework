@@ -1,0 +1,17 @@
+Image: 23.png
+Algorithm: Laguerre
+I_mean: 9.28
+Status: PROCESSED
+Optimal_nu: 0.5942
+Optimal_t: 0.8449
+Total_evals: 1235
+Preset: high_precision
+Processing_time_sec: 1.2750
+
+--- Metrics ---
+Entropy: 7.3779
+CII: 15.3516
+NIQE: 3.4509
+PSNR: 19.7846
+MSE: 683.3170
+SSIM: 0.7590

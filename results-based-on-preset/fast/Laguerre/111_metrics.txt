@@ -1,0 +1,17 @@
+Image: 111.png
+Algorithm: Laguerre
+I_mean: 19.61
+Status: PROCESSED
+Optimal_nu: 0.6100
+Optimal_t: 0.8000
+Total_evals: 99
+Preset: fast
+Processing_time_sec: 0.1749
+
+--- Metrics ---
+Entropy: 7.3100
+CII: 8.8043
+NIQE: 3.8395
+PSNR: 18.7460
+MSE: 867.9253
+SSIM: 0.8769

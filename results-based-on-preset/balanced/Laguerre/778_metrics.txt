@@ -1,0 +1,17 @@
+Image: 778.png
+Algorithm: Laguerre
+I_mean: 7.31
+Status: PROCESSED
+Optimal_nu: 0.7051
+Optimal_t: 0.8944
+Total_evals: 522
+Preset: balanced
+Processing_time_sec: 0.5551
+
+--- Metrics ---
+Entropy: 7.3991
+CII: 17.2391
+NIQE: 3.3638
+PSNR: 14.2962
+MSE: 2418.0258
+SSIM: 0.6324

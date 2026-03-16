@@ -1,0 +1,17 @@
+Image: 748.png
+Algorithm: Laguerre
+I_mean: 12.60
+Status: PROCESSED
+Optimal_nu: 0.7512
+Optimal_t: 0.8967
+Total_evals: 497
+Preset: balanced
+Processing_time_sec: 0.5624
+
+--- Metrics ---
+Entropy: 7.4181
+CII: 12.3816
+NIQE: 3.5545
+PSNR: 11.0777
+MSE: 5073.5019
+SSIM: 0.6865

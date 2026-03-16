@@ -1,0 +1,17 @@
+Image: 493.png
+Algorithm: Laguerre
+I_mean: 6.62
+Status: PROCESSED
+Optimal_nu: 0.7081
+Optimal_t: 0.8957
+Total_evals: 100
+Preset: fast
+Processing_time_sec: 0.1137
+
+--- Metrics ---
+Entropy: 7.2170
+CII: 17.9716
+NIQE: 3.3692
+PSNR: 12.0635
+MSE: 4043.2178
+SSIM: 0.5892

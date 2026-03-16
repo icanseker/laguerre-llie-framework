@@ -1,0 +1,17 @@
+Image: 146.png
+Algorithm: Laguerre
+I_mean: 24.24
+Status: PROCESSED
+Optimal_nu: 0.5436
+Optimal_t: 0.7158
+Total_evals: 1222
+Preset: high_precision
+Processing_time_sec: 1.4350
+
+--- Metrics ---
+Entropy: 7.2489
+CII: 7.2317
+NIQE: 3.9859
+PSNR: 15.1650
+MSE: 1979.5951
+SSIM: 0.8266
