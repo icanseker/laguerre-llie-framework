@@ -8,7 +8,7 @@ This repository contains the full MATLAB implementation accompanying the paper:
 
 The proposed method leverages **coefficient bounds derived from bi-univalent Sakaguchi-type analytic functions**, where the subordinating function is expressed in terms of the **classical Laguerre polynomial family**. These coefficient bounds are used to construct **8-directional 3×3 spatial convolution kernels**, which are applied to very dark images. The parameters governing the coefficient formulas (ν and t) are not fixed — they are **dynamically optimized per image** using a two-phase strategy: a coarse grid search followed by Nelder-Mead simplex refinement, with Shannon entropy as the optimization criterion.
 
-Nine established low-light enhancement algorithms serve as comparison baselines, each representing a fundamentally different algorithmic category. All experiments are conducted on the **LOL (Low-Light) paired dataset**.
+Nine established low-light enhancement algorithms serve as comparison baselines, each representing a fundamentally different algorithmic category. All experiments are conducted on the **LOL (Low-Light) paired dataset**. On LOL-15, the proposed method achieves the **Best NIQE (3.82)** among all 10 methods and **34/90 total metric wins** — the highest win count.
 
 ---
 
