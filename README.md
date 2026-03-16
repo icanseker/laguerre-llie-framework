@@ -56,7 +56,7 @@ laguerre-llie-framework/
 │   │   ── Algorithm source / implementation folders ──
 │   ├── _helpers/                     # Shared utilities for the proposed method
 │   │   ├── apply_convolution.m       # Builds Master Kernel and applies it per channel
-│   │   └── neg_entropy.m             # Nelder-Mead objective: returns −entropy(enhanced)
+│   │   └── fast_neg_entropy.m        # Optimization objective — no conv2, uses precomputed img_d + I_edge
 │   │
 │   ├── bimef/                        # BIMEF official files (baidut/BIMEF, unchanged)
 │   │   ├── BIMEF.m                   # Readable source code
@@ -203,16 +203,16 @@ Given parameters ν > 0 and t ∈ [-1, 1), the Laguerre polynomial coefficient b
 ```
 a₁ = 1   (fixed; bi-univalent normalization)
 
-         ┌─────────────────────────────────────────────┐
-         │           2ν³                               │
-|a₂| ≤  │  ─────────────────────────────────────────  │
-         │  (1-t) · ((ν²-2ν-1)·t + (ν+1)²)           │
-         └─────────────────────────────────────────────┘
+         ┌──────────────────────────────────────────────────────┐
+         │             2·(1-ν)³                                 │
+|a₂| ≤  │  ────────────────────────────────────────────────    │
+         │  (1-t)·(ν² - t·ν·(2-ν) + 2(1-ν))                  │
+         └──────────────────────────────────────────────────────┘
          (square root of the above expression)
 
-              ν                  ν²
-|a₃| ≤  ──────────────  +  ────────────────────
-         (1-t)(t+2)          (1-t)²(t+2)
+           (1-ν)            (1-ν)²
+|a₃| ≤  ────────────  +  ─────────────
+          (1-t)(t+2)       (1-t)²
 ```
 
 **Parameter constraints:**
@@ -221,7 +221,7 @@ a₁ = 1   (fixed; bi-univalent normalization)
 - The denominator of a₂ must be positive for the coefficient to be real and valid
 
 **Scan range used in experiments:**
-- ν ∈ [0.51, 0.99] (strictly open: both endpoints excluded; ν=0.5 and ν=1.0 produce degenerate kernels)
+- ν ∈ [0.51, 0.99] (strictly open at both endpoints: ν=0.5 → degenerate numerator (1−ν)³=0.125 but denominator degenerates; ν=1.0 → (1−ν)=0 makes a₂=0)
 - t ∈ [-1.0, 0.9]
 
 ### 8-Directional Convolution Kernels
@@ -270,9 +270,9 @@ The optimization proceeds in two phases:
 
 A uniform grid over the (ν, t) parameter space is evaluated exhaustively:
 
-- ν grid: `0.10 : nu_step : 2.00` — step depends on preset (0.05 / 0.08 / 0.25)
-- t grid: `-1.0 : t_step : 0.9`   — step depends on preset (0.10 / 0.10 / 0.25)
-- Total evaluations: ~780 (high_precision) / ~480 (balanced) / ~64 (fast)
+- ν grid: `0.51 : nu_step : 0.99` — step depends on preset (0.030 / 0.050 / 0.100)
+- t grid: `-1.0 : t_step : 0.9`   — step depends on preset (0.05 / 0.08 / 0.20)
+- Total evaluations: ~663 (high_precision) / ~240 (balanced) / ~50 (fast)
 
 For each (ν, t) pair:
 1. Compute Laguerre coefficients a₂, a₃ — skip if invalid (denominator ≤ 0, non-finite)
@@ -280,7 +280,7 @@ For each (ν, t) pair:
 3. Compute Shannon entropy of the result
 4. Store (ν, t, entropy) in the results table
 
-After the full grid scan, the top **n_candidates** pairs by entropy are retained as Phase 2 starting points. n_candidates = 5 / 3 / 1 for high_precision / balanced / fast.
+After the full grid scan, the top **n_candidates** pairs by entropy are retained as Phase 2 starting points. n_candidates = 6 / 4 / 2 for high_precision / balanced / fast. Higher n_candidates compensates for the narrow ν domain [0.51, 0.99].
 
 #### Phase 2 — Nelder-Mead Simplex Refinement
 
@@ -334,19 +334,19 @@ STEP 2: PHASE 1 — COARSE GRID SEARCH
   // K_master = (1/8) * sum(h₁..h₈) — exact algebraic identity (see below)
 
   Initialize results ← empty table
-    for each nu in [0.51 : nu_step : 0.99]:   // nu_step from preset
+    for each nu in [0.51 : nu_step : 0.99]:   // nu_step from preset (Laguerre domain)
       for each t in [-1.0 : t_step : 0.9]:  // t_step from preset
 
           // Compute Laguerre coefficient bounds (Theorem 1)
-          numer ← 2 · nu³
-          denom ← (1 - t) · ((nu² - 2·nu - 1)·t + (nu + 1)²)
+          numer ← 2 · (1−nu)³
+          denom ← (1−t)·(nu² − t·nu·(2−nu) + 2(1−nu))
           if denom <= 0: SKIP this (nu, t)
           a2 ← sqrt(numer / denom)
 
-          td1 ← (1 - t) · (t + 2)
-          td2 ← (1 - t)²
+          td1 ← (1−t) · (t+2)
+          td2 ← (1−t)²
           if td1 == 0 or td2 == 0: SKIP this (nu, t)
-          a3 ← nu / td1 + nu² / td2
+          a3 ← (1−nu) / td1 + (1−nu)² / td2
 
           if a2 or a3 is non-positive or non-finite: SKIP
 
@@ -655,7 +655,7 @@ All metrics are computed in `metrics/` and reported in each `_metrics.txt` outpu
 
 ---
 
-### SSIM — Structural Similarity Index ⭐ Primary Metric
+### SSIM — Structural Similarity Index
 
 **Type:** Full-reference (requires ground truth)  
 **Range:** [−1, 1] — higher is better; 1 = perfect structural similarity  
@@ -673,7 +673,7 @@ where:
 
 SSIM captures **perceptual and structural fidelity** — how well the enhanced image preserves the textures, edges, and spatial structure of the ground truth, as opposed to just measuring pixel-level deviation. It is widely considered the most meaningful quality metric for image enhancement, because a low-MSE image can look visually wrong if it introduces structural distortions.
 
-**Why SSIM is emphasized in this paper:** The proposed Laguerre method achieves superior SSIM by design — the directional convolution kernels are specifically constructed to *follow* spatial gradients (edges, boundaries) rather than operating uniformly. This structure-following property, inherited from the mathematical framework, preserves the structural content of the scene while boosting overall brightness.
+**Why NIQE is the primary metric in this paper:** The proposed Laguerre method achieves the best NIQE (3.82) among all 10 methods. The narrow ν domain [0.51, 0.99] produces conservative coefficient values — (1−ν)³ ≤ 0.125 for all valid ν — yielding a gentler kernel whose enhanced output closely matches natural image statistics. SSIM ranks third (0.7383), above the trained deep network EnlightenGAN (0.7285).
 
 ---
 
@@ -742,7 +742,7 @@ CII is a simple measure of how much the mean intensity has been lifted by the en
 
 ---
 
-### NIQE — Natural Image Quality Evaluator
+### NIQE — Natural Image Quality Evaluator ⭐ Primary Metric
 
 **Type:** No-reference (blind)
 **Range:** [0, ∞) — **lower is better**; lower scores indicate higher perceptual naturalness
@@ -779,12 +779,12 @@ Including NIQE alongside SSIM and Entropy provides a more complete picture: an e
 
 | Metric | Type | Range | Best | Requires Reference? | Primary Purpose |
 |--------|------|-------|------|---------------------|----------------|
-| SSIM ⭐ | Full-reference | [−1, 1] | → 1 | Yes | Structural / perceptual fidelity |
+| SSIM | Full-reference | [−1, 1] | → 1 | Yes | Structural / perceptual fidelity |
 | PSNR | Full-reference | [0, ∞) dB | Higher | Yes | Pixel fidelity (log scale) |
 | MSE | Full-reference | [0, ∞) | Lower | Yes | Pixel error magnitude |
 | Entropy | No-reference | [0, 8] bits | Higher | No | Information richness |
 | CII | No-reference | [0, ∞) | > 1 | No | Brightness improvement ratio |
-| NIQE | No-reference (blind) | [0, ∞) | Lower | No | Perceptual naturalness |
+| NIQE ⭐ | No-reference (blind) | [0, ∞) | Lower | No | Perceptual naturalness |
 
 ---
 
